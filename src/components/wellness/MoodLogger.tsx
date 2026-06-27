@@ -1,30 +1,48 @@
-import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { logMood, recentMoods } from "@/lib/mood.functions";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { s } from "@/components/wellness/strings";
 import type { Lang } from "@/components/wellness/i18n";
 import { toast } from "sonner";
 
+type MoodEntry = { id: string; score: number; note?: string; created_at: string };
+
+const STORAGE_KEY = "milestone.moods.v1";
+
+function load(): MoodEntry[] {
+  if (typeof window === "undefined") return [];
+  try {
+    return JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "[]");
+  } catch {
+    return [];
+  }
+}
+
 export function MoodLogger({ lang }: { lang: Lang }) {
   const t = s(lang);
   const [score, setScore] = useState<number | null>(null);
   const [note, setNote] = useState("");
-  const qc = useQueryClient();
+  const [moods, setMoods] = useState<MoodEntry[]>([]);
 
-  const recentQ = useQuery({ queryKey: ["moods"], queryFn: () => recentMoods() });
+  useEffect(() => {
+    setMoods(load());
+  }, []);
 
-  const m = useMutation({
-    mutationFn: () => logMood({ data: { score: score!, note: note || undefined } }),
-    onSuccess: () => {
-      toast.success(t.dashboard.moodLogged);
-      setScore(null);
-      setNote("");
-      qc.invalidateQueries({ queryKey: ["moods"] });
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
+  const save = () => {
+    if (!score) return;
+    const entry: MoodEntry = {
+      id: crypto.randomUUID(),
+      score,
+      note: note || undefined,
+      created_at: new Date().toISOString(),
+    };
+    const next = [entry, ...moods].slice(0, 30);
+    setMoods(next);
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    setScore(null);
+    setNote("");
+    toast.success(t.dashboard.moodLogged);
+  };
 
   return (
     <section
@@ -74,16 +92,12 @@ export function MoodLogger({ lang }: { lang: Lang }) {
           aria-label={t.dashboard.moodNotePh}
           maxLength={200}
         />
-        <Button
-          type="button"
-          onClick={() => m.mutate()}
-          disabled={!score || m.isPending}
-        >
+        <Button type="button" onClick={save} disabled={!score}>
           {t.dashboard.logMood}
         </Button>
       </div>
 
-      {recentQ.data && recentQ.data.length > 0 && (
+      {moods.length > 0 && (
         <div className="mt-5">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             {t.dashboard.recentMoods}
@@ -93,7 +107,7 @@ export function MoodLogger({ lang }: { lang: Lang }) {
             role="img"
             aria-label="Recent mood trend"
           >
-            {[...recentQ.data].reverse().map((row) => (
+            {[...moods].slice(0, 14).reverse().map((row) => (
               <div
                 key={row.id}
                 title={`${t.moodLabels[row.score - 1]} — ${new Date(row.created_at).toLocaleString()}`}
