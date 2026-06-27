@@ -61,7 +61,7 @@ ${data.content}
 """`;
 
     const { object } = await generateObject({
-      model: gateway("google/gemini-3-flash-preview"),
+      model: gateway("google/gemini-2.5-flash"),
       schema: ResultSchema,
       system,
       prompt,

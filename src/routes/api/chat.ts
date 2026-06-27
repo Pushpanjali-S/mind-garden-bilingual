@@ -105,7 +105,7 @@ SAFETY
         const gateway = createLovableAiGatewayProvider(LOVABLE_API_KEY);
 
         const result = streamText({
-          model: gateway("google/gemini-3-flash-preview"),
+          model: gateway("google/gemini-2.5-flash"),
           system,
           messages: await convertToModelMessages(incomingMessages),
         });
