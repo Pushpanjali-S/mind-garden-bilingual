@@ -29,7 +29,7 @@ export const Route = createFileRoute("/api/chat")({
             ? "Always reply in conversational Hindi using Devanagari script."
             : "Always reply in warm conversational English.";
 
-        const system = `You are Milestone, an empathetic mental-wellness companion for Indian students preparing for high-stakes exams (NEET, JEE, CUET, CAT, GATE, UPSC, board exams).
+        const system = `You are MindGarden, an empathetic mental-wellness companion for Indian students preparing for high-stakes exams (NEET, JEE, CUET, CAT, GATE, UPSC, board exams).
 ${name ? `The student's name is ${name}.` : ""}${exam ? ` They are preparing for ${exam}.` : ""}
 
 Style:

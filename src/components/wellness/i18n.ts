@@ -2,7 +2,7 @@ export type Lang = "en" | "hi";
 
 export const t = {
   en: {
-    appName: "Milestone",
+    appName: "MindGarden",
     appNameAccent: "AI Wellness",
     tagline: "A quiet space to reflect, gently.",
     langToggleLabel: "Language",
@@ -53,7 +53,7 @@ export const t = {
     greet: (n: string) => `Hello, ${n}.`,
   },
   hi: {
-    appName: "माइलस्टोन",
+    appName: "माइंडगार्डन",
     appNameAccent: "एआई वेलनेस",
     tagline: "धीरे से सोचने के लिए एक शांत जगह।",
     langToggleLabel: "भाषा",
