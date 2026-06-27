@@ -6,6 +6,7 @@ import { analyzeJournal } from "@/lib/journal.functions";
 import { s } from "@/components/wellness/strings";
 import type { Lang } from "@/components/wellness/i18n";
 import { toast } from "sonner";
+import { MicButton } from "@/components/wellness/MicButton";
 
 type Analysis = Awaited<ReturnType<typeof analyzeJournal>>;
 
@@ -52,7 +53,13 @@ export function JournalAnalyzer({
         className="mt-4 min-h-[180px] resize-none rounded-xl bg-background text-base leading-relaxed"
         maxLength={8000}
       />
-      <div className="mt-3 flex justify-end">
+      <div className="mt-3 flex items-center justify-between gap-2">
+        <MicButton
+          lang={lang}
+          onTranscript={(spoken) =>
+            setText((prev) => (prev ? prev.trim() + " " + spoken : spoken))
+          }
+        />
         <Button
           type="button"
           onClick={() => m.mutate()}
