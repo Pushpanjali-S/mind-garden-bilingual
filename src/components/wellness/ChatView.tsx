@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { s } from "@/components/wellness/strings";
 import type { Lang } from "@/components/wellness/i18n";
 import { cn } from "@/lib/utils";
+import { MicButton } from "@/components/wellness/MicButton";
 
 export function ChatView({
   lang,
@@ -134,6 +135,12 @@ export function ChatView({
         className="border-t border-border/60 bg-card/60 p-3 backdrop-blur"
       >
         <div className="flex items-end gap-2">
+          <MicButton
+            lang={lang}
+            onTranscript={(spoken) =>
+              setInput((prev) => (prev ? prev.trim() + " " + spoken : spoken))
+            }
+          />
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
