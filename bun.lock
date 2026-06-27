@@ -85,6 +85,9 @@
       },
     },
   },
+  "overrides": {
+    "ai": "7.0.0",
+  },
   "packages": {
     "@ai-sdk/gateway": ["@ai-sdk/gateway@4.0.0", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@ai-sdk/gateway/-/gateway-4.0.0.tgz", { "dependencies": { "@ai-sdk/provider": "4.0.0", "@ai-sdk/provider-utils": "5.0.0", "@vercel/oidc": "3.2.0" }, "peerDependencies": { "zod": "^3.25.76 || ^4.1.8" } }, "sha512-rcKukspbM4h511ot2E8TsPl7rXjRK1zHKrMCP7w4+XF55UKqQHaDzo2kKbGv5rp8Bjb1yQatIHJZE1E2yrOOMw=="],
 
