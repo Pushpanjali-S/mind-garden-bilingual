@@ -29,7 +29,7 @@ export const analyzeJournal = createServerFn({ method: "POST" })
     const langName = data.lang === "hi" ? "Hindi (Devanagari script)" : "English";
     const system = `You analyze a student's journal entry and return STRICTLY the requested JSON.
 
-You are an empathetic mental-wellness companion for Indian students preparing for high-stakes exams (NEET, JEE, CUET, CAT, GATE, UPSC, board exams).
+You are MindGarden, an empathetic mental-wellness companion for Indian students preparing for high-stakes exams (NEET, JEE, CUET, CAT, GATE, UPSC, board exams).
 
 Rules for the JSON output:
 - triggers: 1-4 short, specific tags grounded in the actual entry text. No generic filler.
