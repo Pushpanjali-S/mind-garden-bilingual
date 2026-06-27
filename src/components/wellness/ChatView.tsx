@@ -1,5 +1,5 @@
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, type UIMessage } from "ai";
+import { DefaultChatTransport } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Send, Square } from "lucide-react";
@@ -7,47 +7,44 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { s } from "@/components/wellness/strings";
 import type { Lang } from "@/components/wellness/i18n";
-import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 export function ChatView({
-  threadId,
-  initialMessages,
   lang,
+  name,
+  exam,
 }: {
-  threadId: string;
-  initialMessages: UIMessage[];
   lang: Lang;
+  name?: string;
+  exam?: string;
 }) {
   const t = s(lang);
   const langRef = useRef(lang);
+  const nameRef = useRef(name);
+  const examRef = useRef(exam);
   useEffect(() => {
     langRef.current = lang;
-  }, [lang]);
+    nameRef.current = name;
+    examRef.current = exam;
+  }, [lang, name, exam]);
 
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
         api: "/api/chat",
-        fetch: async (input, init) => {
-          const { data } = await supabase.auth.getSession();
-          const token = data.session?.access_token;
-          const headers = new Headers(init?.headers);
-          if (token) headers.set("Authorization", `Bearer ${token}`);
-          return fetch(input as RequestInfo, { ...init, headers });
-        },
-        prepareSendMessagesRequest: ({ messages, id }) => ({
-          body: { messages, thread_id: id, lang: langRef.current },
+        prepareSendMessagesRequest: ({ messages }) => ({
+          body: {
+            messages,
+            lang: langRef.current,
+            name: nameRef.current,
+            exam: examRef.current,
+          },
         }),
       }),
     [],
   );
 
-  const { messages, sendMessage, status, stop, error } = useChat({
-    id: threadId,
-    messages: initialMessages,
-    transport,
-  });
+  const { messages, sendMessage, status, stop, error } = useChat({ transport });
 
   const [input, setInput] = useState("");
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -65,20 +62,25 @@ export function ChatView({
   };
 
   return (
-    <div className="flex h-[calc(100dvh-7rem)] flex-col md:h-[calc(100dvh-3rem)]">
+    <section
+      aria-label={t.chat.title}
+      className="flex h-[520px] flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-float"
+    >
+      <header className="border-b border-border/60 px-5 py-3">
+        <h2 className="font-serif text-xl">{t.chat.title}</h2>
+      </header>
       <div
         ref={scrollerRef}
-        className="flex-1 overflow-y-auto px-4 py-6 sm:px-8"
+        className="flex-1 overflow-y-auto px-4 py-5"
         aria-live="polite"
         aria-busy={status === "streaming" || status === "submitted"}
       >
         {messages.length === 0 && (
-          <div className="mx-auto max-w-2xl rounded-2xl border border-border/60 bg-card/70 p-6 text-center text-muted-foreground shadow-float">
-            <p className="font-serif text-lg text-foreground">{t.chat.title}</p>
-            <p className="mt-2 text-sm">{t.chat.empty}</p>
-          </div>
+          <p className="mx-auto max-w-md text-center text-sm text-muted-foreground">
+            {t.chat.empty}
+          </p>
         )}
-        <ul className="mx-auto flex max-w-2xl flex-col gap-4">
+        <ul className="flex flex-col gap-3">
           {messages.map((m) => (
             <li
               key={m.id}
@@ -89,10 +91,10 @@ export function ChatView({
             >
               <div
                 className={cn(
-                  "max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-float",
+                  "max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed",
                   m.role === "user"
                     ? "bg-primary text-primary-foreground"
-                    : "bg-card text-card-foreground",
+                    : "bg-background text-foreground",
                 )}
               >
                 {m.parts.map((p, i) =>
@@ -111,7 +113,7 @@ export function ChatView({
           {(status === "submitted" || status === "streaming") &&
             messages[messages.length - 1]?.role !== "assistant" && (
               <li className="flex justify-start">
-                <div className="rounded-2xl bg-card px-4 py-3 text-sm text-muted-foreground shadow-float">
+                <div className="rounded-2xl bg-background px-4 py-3 text-sm text-muted-foreground">
                   {t.chat.thinking}
                 </div>
               </li>
@@ -129,9 +131,9 @@ export function ChatView({
 
       <form
         onSubmit={submit}
-        className="border-t border-border/70 bg-card/60 p-3 backdrop-blur sm:p-4"
+        className="border-t border-border/60 bg-card/60 p-3 backdrop-blur"
       >
-        <div className="mx-auto flex max-w-2xl items-end gap-2">
+        <div className="flex items-end gap-2">
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -162,6 +164,6 @@ export function ChatView({
           )}
         </div>
       </form>
-    </div>
+    </section>
   );
 }
