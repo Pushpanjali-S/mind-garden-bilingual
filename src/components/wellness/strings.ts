@@ -4,7 +4,7 @@ export type AppStrings = typeof appStrings.en;
 
 export const appStrings = {
   en: {
-    appName: "Milestone",
+    appName: "MindGarden",
     tagline: "Your calm AI companion through exam season.",
     heroSub:
       "Journal openly, log your mood, and talk to an empathetic AI tuned for students preparing for NEET, JEE, CUET, CAT, GATE, UPSC and board exams.",
@@ -74,7 +74,7 @@ export const appStrings = {
       "If you are in crisis or thinking of harming yourself, please reach out now. iCall +91 9152987821 · Vandrevala Foundation 1860-2662-345 (free, 24/7).",
   },
   hi: {
-    appName: "माइलस्टोन",
+    appName: "माइंडगार्डन",
     tagline: "परीक्षा के दिनों में आपका शांत एआई साथी।",
     heroSub:
       "खुलकर लिखें, अपना मूड दर्ज करें, और NEET, JEE, CUET, CAT, GATE, UPSC तथा बोर्ड परीक्षाओं की तैयारी कर रहे छात्रों के लिए तैयार सहानुभूतिपूर्ण एआई से बात करें।",
