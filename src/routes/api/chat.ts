@@ -43,7 +43,7 @@ ${langLine}`;
         const result = streamText({
           model: gateway("google/gemini-2.5-flash"),
           system,
-          messages: convertToModelMessages(incoming),
+          messages: await convertToModelMessages(incoming),
         });
         return result.toUIMessageStreamResponse();
       },
